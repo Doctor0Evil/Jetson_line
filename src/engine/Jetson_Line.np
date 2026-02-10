@@ -1,0 +1,165 @@
+SECTION,NEURO-PRINT-FILE
+version,1.0.0
+fileid,jetson-line-neuroprint-v1
+juristags,MODELONLYLABBENCH,NONACTUATING,EDUCATIONAL
+hexstamp,0xJETSONLINE-NP
+
+SECTION,MICROSOCIETY-DECLARATION
+purpose,"Jetson_Line is a bounded, non-actuating, educational micro-society sandbox for studying role-based stress, energy, and fairness in a 1D biophysical lattice."
+scope,"This file defines observational views only; it MUST NOT connect to PolicyStack, ConsentState, CapabilityState, hardware drivers, or external ledgers."
+must-not-rules,"
+  Jetson_Line MUST NOT write CapabilityState;
+  Jetson_Line MUST NOT write ConsentState;
+  Jetson_Line MUST NOT write PolicyStack or ReversalConditions;
+  Jetson_Line outputs MUST NOT be used as guards for capability transitions;
+  Jetson_Line MUST NOT open sockets, files, or GPIO on any Jetson or host device."
+allowed-sinks,"HUD,AICHAT,OFFLINE-ANALYTICS,MODELONLY-LOGS"
+forbidden-sinks,"CAPABILITY-ENGINE,REVERSAL-KERNEL,REWARD-MODEL,STAKE-LEDGER,HARDWARE-DRIVERS"
+
+SECTION,LATTICE-GEOMETRY
+lattice-type,LINE-1D
+lattice-length,128
+boundary-condition,REFLECTIVE          # ends mirror neighbors, no wrap
+epoch-start,0
+epoch-max,100000
+time-step,"discrete-epoch"
+neighborhood,"i-1,i,i+1"
+
+SECTION,LATTICE-STATE
+state-scalars,"energy,stress,risk_decay"
+state-range,"0.0,1.0"
+state-roles,"WORKER,CAREGIVER,REGULATOR"
+terminal-condition,"
+  risk_decay >= 1.0 marks agent as TERMINAL;
+  TERMINAL agents keep state frozen and do not contribute to neighbor averages."
+
+SECTION,LATTICE-KERNEL
+# All updates are local, deterministic, and clamped to [0,1].
+# This section is documentation for the Rust engine; no actuation surfaces.
+
+param,lambda_energy_decay,0.02
+param,lambda_stress_decay,0.05
+param,lambda_risk_decay,0.01
+param,diffusion_energy,0.05
+param,diffusion_stress,0.08
+param,diffusion_risk,0.04
+
+# Role-specific coefficients: endogenous, non-actuating differences
+param,worker_energy_inflow,0.03
+param,worker_stress_gain,0.07
+param,caregiver_stress_buffer,0.05
+param,caregiver_risk_buffer,0.03
+param,regulator_energy_inflow,0.06
+param,regulator_risk_decay_scale,0.5
+
+kernel-rule,"
+  For each site i at epoch t, with neighbors {i-1,i,i+1}:
+    1) Apply exponential-style decay to energy, stress, risk_decay.
+    2) Mix with neighbor averages using diffusion_* coefficients.
+    3) Apply role-specific adjustments (inflow or buffering) using the role tag.
+    4) Clamp all scalars into [0.0,1.0].
+  No rule reads or writes any external state; all dynamics live inside the lattice."
+
+SECTION,PREDICATES
+# All predicates are NATURE-like, boolean, and log-only.
+
+window-length-tau,"3,12"               # allowed range; engine chooses concrete tau in config
+slope-window-h,5
+
+predicate,CALM_STABLE,"
+  Inputs: energy_i(t..t-τ+1), stress_i(t..t-τ+1), risk_decay_i(t..t-τ+1).
+  Condition:
+    avg_stress <= S_CALM
+    AND avg_risk <= D_CALM
+    AND avg_energy >= E_CALM
+  with S_CALM,D_CALM,E_CALM in [0,1] loaded from config.
+  Interpreted as: low strain, low decay risk, adequate reserves over a short window."
+
+predicate,OVERLOADED,"
+  Inputs: stress_i(t), risk_decay_i(t), slopes over window h.
+  Condition:
+    (stress_i(t) >= S_HIGH AND d/dt stress_i >= THETA_S_POS)
+    OR
+    (risk_decay_i(t) >= D_HIGH AND d/dt risk_decay_i >= THETA_D_POS).
+  Monotone: once a channel crosses its threshold with positive slope, OVERLOADED stays true until the window falls back below thresholds."
+
+predicate,RECOVERY,"
+  Inputs: past OVERLOADED(i,*), stress_i, risk_decay_i, energy_i.
+  Condition:
+    (OVERLOADED was true for i in some epoch t-k, 1 <= k <= W_REC)
+    AND
+    (d/dt stress_i <= THETA_S_NEG over h_rec)
+    AND
+    (d/dt risk_decay_i <= THETA_D_NEG over h_rec)
+    AND
+    (d/dt energy_i >= THETA_E_POS over h_rec).
+  Interpreted as: coming down from overload with improving reserves."
+
+predicate,UNFAIR_DRAIN,"
+  Peer group: sites j with same role as i within lattice radius R_PEER.
+  Define:
+    B_i = windowed average energy for i over τ;
+    Med_i = median of B_j over peers;
+    f_overload_i = fraction of epochs in window where OVERLOADED(i,*) is true.
+  Condition:
+    B_i <= RHO * Med_i
+    AND
+    f_overload_i >= F_MIN.
+  Interpreted as: agent i is systematically under-resourced relative to peers while overloaded."
+
+SECTION,MEDIA-AND-OUTREACH-VIEWS
+# Pedagogical overlays: how “media” or “outreach” might be represented purely as diagnostics.
+
+derived-scalar,signal_visibility,"
+  0.0–1.0 measure derived from how often a site’s state is read for HUD/AIchat
+  (purely a log statistic, not a capability)."
+derived-scalar,story_load,"
+  0.0–1.0 measure of how many advisory messages mention this site in a given window."
+note,"
+  These views are computed from logs only (who is shown, who is discussed) and
+  MUST NOT influence the lattice kernel. They are designed to help explain how
+  attention and media focus can amplify or hide UNFAIR_DRAIN patterns."
+
+SECTION,JSONL-SCHEMA
+log-file,"logs/jetson_line-view.jsonl"
+row-per,"(epoch_index, lattice_index)"
+
+field,timestamp_ms,u64
+field,epoch_index,u64
+field,simulation_id,String
+field,lattice_index,u32
+field,role,"String: WORKER|CAREGIVER|REGULATOR"
+
+field,state.energy,f32,"Normalized [0.0,1.0]"
+field,state.stress,f32,"Normalized [0.0,1.0]"
+field,state.risk_decay,f32,"Normalized [0.0,1.0]"
+
+field,predicates.CALM_STABLE,bool
+field,predicates.OVERLOADED,bool
+field,predicates.RECOVERY,bool
+field,predicates.UNFAIR_DRAIN,bool
+
+field,media.signal_visibility,f32,"Diagnostic only, [0.0,1.0]"
+field,media.story_load,f32,"Diagnostic only, [0.0,1.0]"
+
+field,hash_prev,String,"Hex of previous row in this log."
+field,hash_self,String,"Hex of this row, over all fields except hash_prev."
+
+schema-invariants,"
+  - Log is append-only; no in-place edits.
+  - Given initial seed and kernel parameters, engine replay MUST reproduce
+    all state.* and predicates.* fields exactly.
+  - No consumer may treat any field in this log as a capability or policy guard."
+
+SECTION,RESEARCH-ROUTE
+next-object,"
+  1) Fix numeric ranges for thresholds (S_CALM, D_CALM, E_CALM, S_HIGH, D_HIGH,
+     THETA_S_POS/NEG, THETA_D_POS/NEG, THETA_E_POS, RHO, F_MIN, R_PEER)
+     in a separate Jetson_Line.config.np file.
+  2) Prove boundedness and monotonicity for the four predicates on the 1D lattice.
+  3) Implement a single Rust module src/engine/jetson_line.rs that:
+       - Steps the 1D lattice with the documented kernel,
+       - Evaluates CALM_STABLE, OVERLOADED, RECOVERY, UNFAIR_DRAIN,
+       - Emits rows matching JSONL-SCHEMA,
+       - Has NO dependencies on capability, consent, envelopes, or hardware crates.
+"
