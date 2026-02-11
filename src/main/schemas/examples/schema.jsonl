@@ -1,0 +1,61 @@
+{
+  "timestamp_ms": 1739145600000,
+  "epoch_index": 42,
+  "simulation_id": "microsoc-1d-v1",
+  "agent_id": "agent-007",
+  "lattice_index": 7,
+
+  "role_tags": ["WORKER", "BELIEVER"],
+
+  "state": {
+    "energy": 0.63,
+    "stress": 0.41,
+    "decay": 0.29
+  },
+
+  "fairness_predicates": {
+    "CALM_STABLE": false,
+    "OVERLOADED": true,
+    "RECOVERY": false,
+    "UNFAIR_DRAIN": false
+  },
+
+  "media": {
+    "signal_visibility": 0.20,
+    "story_load": 0.75
+  },
+
+  "kernel_context": {
+    "window_W": 8,
+    "slope_window_h": 3,
+    "peer_radius": 2,
+    "thresholds": {
+      "S_CALM": 0.25,
+      "D_CALM": 0.30,
+      "E_CALM": 0.60,
+      "S_HIGH": 0.70,
+      "D_HIGH": 0.75,
+      "RECOV_S_NEG": -0.03,
+      "RECOV_D_NEG": -0.03,
+      "RECOV_E_POS": 0.03,
+      "UNFAIR_MARGIN": 0.10,
+      "UNFAIR_FMIN": 0.40
+    }
+  },
+
+  "contextual_bounds": {
+    "HIVEMIND_FENCE": "NO_ACTUATION",
+    "TREE_OF_LIFE": "VIEW_ONLY",
+    "NATURE_PREDICATES": ["CALM_STABLE", "OVERLOADED", "RECOVERY", "UNFAIR_DRAIN"],
+    "BIOPHYSICAL_ENVELOPE": "SIMULATED"
+  },
+
+  "advisory_tags": [
+    "NO-SA-EVIDENCE",
+    "PATTERN_I_OBSERVER",
+    "EDUCATIONAL_ONLY"
+  ],
+
+  "hash_prev": "0xMICRO-0000000000000000000000000000000000000000",
+  "hash_self": "0xMICRO-3af2e6f7c4b9d0e8b1c2d3e4f5a6978877665544"
+}
