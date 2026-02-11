@@ -1,0 +1,22 @@
+{
+  "frame_id": "msf-000123",
+  "subject_id": "S-01",
+  "epoch": 42,
+  "belief_load": 0.18,
+  "preacher_contribution": 0.05,
+  "diagnostics": {
+    "tree_assets": { "DECAY": 0.22, "LIFEFORCE": 0.78, "FEAR": 0.15, "PAIN": 0.10 },
+    "unfairdrain_index": 0.03
+  },
+  "context_boundary": {
+    "hivemind_fence_id": "hivemind-fence-v1",
+    "tree_of_life_id": "tree-of-life-view-v1",
+    "biophysical_envelope_ref": "env-cognitiveload-v1",
+    "nature_predicate_hash": "0xNATURE-abc123...",
+    "juristags": ["USFDA-SaMD-RO","EUMDR-DIAG","CHILENEURORIGHTS2023"],
+    "advisory_only": true,
+    "policy_tags": ["NO-SA-EVIDENCE","ALN-DIAGNOSTIC-ONLY"]
+  },
+  "hash": "0xMSF-...current...",
+  "prevhash": "0xMSF-...previous..."
+}
