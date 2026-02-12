@@ -1,0 +1,31 @@
+[package]
+name = "jetson_line_agent"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Jetson-side biophysical event adapter feeding the MicroSociety 1-D Jetson_Line judgement engine"
+# Optional: update this with your real repo URL
+repository = "https://github.com/Doctor0Evil/Jetson_line"
+
+[dependencies]
+# Core judgement engine crate living as a sibling directory.
+microsociety_judgement_line = { path = "../microsociety_judgement_line" }
+
+# Time handling for biophysical events and decay.
+chrono = { version = "0.4", features = ["serde"] }
+
+# JSON I/O for ingest/export of line and scores.
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Error handling for main.rs (pragmatic, binary-level use).
+anyhow = "1"
+
+# (Optional) If you later add structured logging on Jetson, you can extend:
+# log = "0.4"
+# env_logger = "0.11"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
