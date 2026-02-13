@@ -1,0 +1,20 @@
+[build]
+target-dir = "target"
+
+[term]
+color = "auto"
+
+[env]
+RUST_BACKTRACE = "1"
+
+[alias]
+t = "test"
+b = "build"
+r = "run"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+debug = true
+lto = "thin"
