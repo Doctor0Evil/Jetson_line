@@ -38,3 +38,8 @@ TokenUsageGuard implements these constraints as a pure function:
 
 ```rust
 fn evaluate_token_usage(kind: TokenKind, sink: TokenSink) -> TokenUsageDecision
+```
+
+Higher-level code MUST log each decision as a WORM TokenUsageEvent aligned with `.donutloop.aln` and, optionally, Googolswarm anchoring.[file:10]
+
+This keeps interpretive layers (Tree-of-Life, Church-of-FEAR, AutoChurch, data-sovereignty views) permanently in the non-actuating domain: they can explain, advise, and support proofs-of-ownership, but can never silently alter sovereignty or capability.[file:10][file:19]
