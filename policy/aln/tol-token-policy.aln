@@ -1,0 +1,58 @@
+SECTION,TOL-TOKEN-POLICY-META
+ROW,meta,schema,scalar,schemaid,tol-token-policy-v1,string,primarykey,Canonical TokenUsageGuard policy schema ID
+ROW,meta,schema,scalar,version,1.0.0,string,nonnull,Version tag
+ROW,meta,schema,scalar,createdby,bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7,string,nonnull,Creator DID
+ROW,meta,schema,scalar,createdat,2026-02-13T00:00:00Z,timestamp,nonnull,Creation time
+ROW,meta,schema,array,juristags,USFDASaMDEUMDRAIACTCHILENEURORIGHTS2023,string,nonnull,Applicable regimes
+ROW,meta,schema,scalar,hexstamp,0xTOL-TOKEN-POLICY-NOACT,string,nonnull,WORM policy invariant tag
+
+SECTION,TOL-TOKEN-KINDS
+ROW,kind,core,enum,tokenkind,TreeOfLifeView,string,nonnull,TreeOfLifeView normalized TREE assets BLOODOXYGENWAVEDECAYLIFEFORCEPOWERTECHFEARPAINNANO
+ROW,kind,core,enum,tokenkind,TreeOfLifeDiagnostics,string,nonnull,TreeOfLife advisory predicates CALMSTABLEOVERLOADEDRECOVERYUNFAIRDRAIN etc.
+ROW,kind,core,enum,tokenkind,NonActuatingDataSovView,string,nonnull,Readonly data-sovereignty view over .evolve.jsonl .donutloop.aln
+ROW,kind,core,enum,tokenkind,ChurchAccountView,string,nonnull,Church-of-FEAR ChurchAccountState snapshot
+ROW,kind,core,enum,tokenkind,MoralPositionScore,string,nonnull,AutoChurch moralposition or archetype diagnostics
+
+SECTION,TOL-TOKEN-SINKS
+ROW,sink,core,enum,tokensink,Hud,string,nonnull,HUD or UI rendering only
+ROW,sink,core,enum,tokensink,AiChat,string,nonnull,AI-chat explanation and documentation
+ROW,sink,core,enum,tokensink,AnalyticsOffline,string,nonnull,Offline analytics in CapModelOnly or CapLabBench
+ROW,sink,core,enum,tokensink,CapabilityEngine,string,nonnull,CapabilityTransitionRequest or CapabilityGuard logic
+ROW,sink,core,enum,tokensink,ReversalKernel,string,nonnull,ReversalConditions or reversal-related kernels
+ROW,sink,core,enum,tokensink,RewardModel,string,nonnull,Rewardscoringselectioneconet logic
+ROW,sink,core,enum,tokensink,EnvelopeKernel,string,nonnull,BiophysicalEnvelopeSpec kernels
+ROW,sink,core,enum,tokensink,StakeGovernance,string,nonnull,Stake/role/neurorights governance kernels
+
+SECTION,TOL-TOKEN-POLICY
+ROW,policy,rule,scalar,defaultdecision,DeniedTokenUsageByDefault,string,readonly,Default deny for any TokenKind/TokenSink pair not explicitly allowed
+
+ROW,policy,allow,condition,allow_view_hud,TreeOfLifeView,Hud,string,readonly,TreeOfLifeView MAY be used in HUD rendering only
+ROW,policy,allow,condition,allow_diag_hud,TreeOfLifeDiagnostics,Hud,string,readonly,TreeOfLifeDiagnostics MAY be used in HUD rendering only
+ROW,policy,allow,condition,allow_view_aichat,TreeOfLifeView,AiChat,string,readonly,TreeOfLifeView MAY be used in AI-chat explanations only
+ROW,policy,allow,condition,allow_diag_aichat,TreeOfLifeDiagnostics,AiChat,string,readonly,TreeOfLifeDiagnostics MAY be used in AI-chat explanations only
+ROW,policy,allow,condition,allow_view_analytics,TreeOfLifeView,AnalyticsOffline,string,readonly,TreeOfLifeView MAY be used in offline analytics in CapModelOnlyCapLabBench only
+ROW,policy,allow,condition,allow_diag_analytics,TreeOfLifeDiagnostics,AnalyticsOffline,string,readonly,TreeOfLifeDiagnostics MAY be used in offline analytics in CapModelOnlyCapLabBench only
+
+ROW,policy,allow,condition,allow_data_hud,NonActuatingDataSovView,Hud,string,readonly,Data-sovereignty views MAY be rendered in HUD
+ROW,policy,allow,condition,allow_data_aichat,NonActuatingDataSovView,AiChat,string,readonly,Data-sovereignty views MAY be used in AI-chat
+ROW,policy,allow,condition,allow_data_analytics,NonActuatingDataSovView,AnalyticsOffline,string,readonly,Data-sovereignty views MAY be used in offline analytics only
+
+ROW,policy,allow,condition,allow_church_hud,ChurchAccountView,Hud,string,readonly,ChurchAccountView MAY be rendered in HUD
+ROW,policy,allow,condition,allow_church_aichat,ChurchAccountView,AiChat,string,readonly,ChurchAccountView MAY be used in AI-chat
+ROW,policy,allow,condition,allow_church_analytics,ChurchAccountView,AnalyticsOffline,string,readonly,ChurchAccountView MAY be used in offline analytics only
+
+ROW,policy,allow,condition,allow_moral_hud,MoralPositionScore,Hud,string,readonly,MoralPositionScore MAY be rendered in HUD
+ROW,policy,allow,condition,allow_moral_aichat,MoralPositionScore,AiChat,string,readonly,MoralPositionScore MAY be used in AI-chat
+ROW,policy,allow,condition,allow_moral_analytics,MoralPositionScore,AnalyticsOffline,string,readonly,MoralPositionScore MAY be used in offline analytics only
+
+ROW,policy,deny,condition,deny_all_capability,*,CapabilityEngine,string,readonly,NonActuatingToken MUST NOT be used as inputs to CapabilityTransitionRequest or CapabilityGuard
+ROW,policy,deny,condition,deny_all_reversal,*,ReversalKernel,string,readonly,NonActuatingToken MUST NOT be used as inputs to ReversalConditions or reversal kernels
+ROW,policy,deny,condition,deny_all_reward,*,RewardModel,string,readonly,NonActuatingToken MUST NOT be used as inputs to rewardscoringselectioneconet models
+ROW,policy,deny,condition,deny_all_envelope,*,EnvelopeKernel,string,readonly,NonActuatingToken MUST NOT be used as inputs to envelope kernels except for loggingonly correlation
+ROW,policy,deny,condition,deny_all_stake,*,StakeGovernance,string,readonly,NonActuatingToken MUST NOT be used as inputs to .stake.aln .neurorights.json or role allocation
+
+SECTION,TOL-TOKEN-INVARIANTS
+ROW,inv,nonactuation,condition,tokens_are_observer_only,NonActuatingToken MUST NOT write CapabilityStateConsentStatePolicyStackEnvelopes,string,readonly,Tokens are readonlyobserver-only diagnostics
+ROW,inv,logging,condition,usage_must_be_logged,All TokenUsageGuard decisions MUST be logged into .donutloop.aln or aligned WORM logs,string,readonly,Every token usage decision is hashlinked and auditable
+
+FOOTER,END-OF-TOL-TOKEN-POLICY
