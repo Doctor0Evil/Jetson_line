@@ -1,0 +1,26 @@
+# Rust build output
+/target/
+/debug/
+/release/
+
+# Cargo lock for libraries (keep or drop depending on your policy)
+Cargo.lock
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local logs / experiments
+logs/
+*.log
+*.jsonl
+
+# Generated episodes
+episode_*.json
+episode_*.cbor
