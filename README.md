@@ -12,10 +12,13 @@ On Jetson_Line, existence is not abstract. Each index `i = 0..N‑1` is a site w
 - FEAR – bounded awareness of risk.
 - POWER – authorized capability, hard‑capped by CHURCH.
 - TECH – deployed technology.
+- NEURO – neural-interface capability and care obligation, tied to neurorights bands and FEAR/CHURCH so that brain‑adjacent interventions remain corridor‑safe. [file:2][file:3]
+- NANO – nanoswarm and micro‑actuation capacity, bounded by computebioload and territorial ceilings so biology is never over‑allocated as a sacrificial buffer. [file:2][file:3]
+- CYBER – cyber‑infrastructure and computation reach, representing digital bandwidth, storage, and algorithmic leverage constrained by POWER ≤ k·CHURCH and justice metrics to prevent predatory dominance. [file:2]
 - bioload – biophysical load (stress, damage, resource use).
 - pollution / exposure / habit / trust.
 - biosignature1d – a 0–1 scalar rail for local compatibility.
-- computebioload – territorial load view (body, room, grid). [file:3][file:2]
+- computebioload – territorial load view (body, room, grid).
 
 A presence is legitimate only while its scalars remain inside the Right‑to‑Exist Corridor:
 
